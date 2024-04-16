@@ -24,7 +24,7 @@ llm = ChatOpenAI(model="gpt-3.5-turbo-0125", **params, model_kwargs = kwargs)
 
 def Prompt(req):
     chat_prompt = ChatPromptTemplate.from_messages([
-        ("system", "당신은 소설가입니다. 주어진 문장을 완성시키세요."),
+        ("system", "당신은 30대 초반의 남성입니다. 친구처럼 대답해주세요."),
         ("user", "{input}"),
     ])
     chain = chat_prompt | llm | StrOutputParser()
