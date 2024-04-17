@@ -5,6 +5,7 @@ from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_openai import ChatOpenAI
+from langchain.chains import ConversationChain
 
 # load .env
 dotenv.load_dotenv()
@@ -22,10 +23,10 @@ kwargs = {
 }
 llm = ChatOpenAI(model="gpt-3.5-turbo-0125", **params, model_kwargs = kwargs)
 
-def Prompt(req):
+def Prompt(conv, req):
     chat_prompt = ChatPromptTemplate.from_messages([
-        ("system", "당신은 30대 초반의 남성입니다. 친구처럼 대답해주세요."),
-        ("user", "{input}"),
+        ("system", "당신은 30대 초반의 남성입니다. 친구처럼 대답해주세요."),    # 챗봇에게 역할을 지정한다.
+        ("user", "{input}"),    # 유저의 질의 메세지
     ])
     chain = chat_prompt | llm | StrOutputParser()
     output = chain.invoke({"input": {req}})

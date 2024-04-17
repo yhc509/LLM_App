@@ -6,8 +6,6 @@ import langwrapper as llm
 def add_message(id, query):
     message = {"role" : id, "content" : query}
     st.session_state.messages.append(message) # 질문 입력한것 출력
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
 
 def main():
     st.set_page_config(page_title="Test Chat-Bot Page")
@@ -24,14 +22,14 @@ def main():
     if 'messages' not in st.session_state:
         st.session_state['messages'] = []
     
+    if query := st.chat_input("Type your question."): # 채팅 텍스트필드
+        add_message("user", query) # 질문 입력한것 출력
+        res = llm.Prompt(st.session_state.messages, query)
+        add_message("assistant", res) # 더미 텍스트
+
     for message in st.session_state.messages:
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
-
-    if query := st.chat_input("Type your question."): # 채팅 텍스트필드
-        add_message("user", query) # 질문 입력한것 출력
-        res = llm.Prompt(query)
-        add_message("assistant", res) # 더미 텍스트
 
 
 if __name__ == '__main__':
