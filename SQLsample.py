@@ -1,11 +1,16 @@
 import mysql.connector as msc
+from dotenv import load_dotenv
+import os
+
+# load .env
+load_dotenv()
 
 # MySQL 서버 연결 정보
 _host = 'mydatabase.c9qe4wygwsw5.ap-northeast-2.rds.amazonaws.com'
 _database = 'TestDB'
 _table = 'NewTable'
-_user = ''
-_password = ''
+_user = os.environ.get('user')
+_password = os.environ.get('password')
 
 # MySQL 서버에 연결
 conn = msc.connect(host = _host, database = _database, user=_user, password=_password)
