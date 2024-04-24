@@ -2,7 +2,8 @@
 ---
 ## Install Project
 ```
-venv\Scripts\activate.bat
+venv\Scripts\activate.bat        (Windows)
+source venv\Scripts\activate     (Linux , MacOS)
 pip install -r requirements.txt
 ```
 
