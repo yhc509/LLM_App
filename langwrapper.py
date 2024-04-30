@@ -13,6 +13,9 @@ from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import chroma
 from langchain.vectorstores import Chroma
 from langchain_core.callbacks.base import BaseCallbackHandler
+from langchain.schema.runnable import RunnablePassthrough
+from langchain import hub
+from langchain.chains import RetrievalQA
 
 # load .env
 dotenv.load_dotenv()
@@ -29,22 +32,20 @@ kwargs = {
 
 }
 
-class StreamingHandler(BaseCallbackHandler):
-    def on_llm_new_token(self, token: str, **kwargs) -> None:
-        print(f"{token}", end="", flush=True)
-        
 def InitModel():
     llm = ChatOpenAI(
         model="gpt-3.5-turbo-0125", 
         **params, 
         model_kwargs = kwargs,
-        callbacks=[StreamingHandler()]
         )
-    conv = ConversationSummaryBufferMemory(llm=llm, max_token_limit=100)
+    conv = ConversationSummaryBufferMemory(
+        llm=llm, 
+        max_token_limit=100,
+        )
     conversation = ConversationChain(
         llm=llm, 
         memory = conv,
-        verbose=True
+        verbose=True,
     )
     return conversation
     
@@ -68,8 +69,46 @@ def ReadFile(uploaded_file):
 
 def Prompt(model, prompt, uploadedFile):
     if uploadedFile is not None:
-        context = ReadFile(uploadedFile)
-        output = model.predict({'context':context, 'input':prompt})
+        retriever = ReadFile(uploadedFile)
+        promptTemplate = ChatPromptTemplate.from_messages(
+            [
+                (
+                    "system",
+                    """
+                    You are a helpful assistant. 
+                    Answer questions using only the following context. 
+                    If you don't know the answer just say you don't know, don't make it up:
+                    \n\n
+                    {context}",
+                    """
+                ),
+                ("human", "{question}"),
+            ]
+        )
+
+        llm = ChatOpenAI(
+            model="gpt-3.5-turbo-0125", 
+            **params, 
+            model_kwargs = kwargs,
+        )
+        chain = (
+            {
+                "context": retriever,
+                "question": RunnablePassthrough(),
+            }
+            | promptTemplate
+            | llm
+            | StrOutputParser()
+        )
+        output = chain.invoke(prompt)
+        # output = model.invoke({"context": retriever, "input":prompt})
+        # p = hub.pull("rlm/rag-prompt")
+        # qa_chain = RetrievalQA.from_chain_type(
+        #     model,
+        #     retriever=retriever,
+        #     chain_type_kwargs={"prompt": p}
+        # )
+        # output = qa_chain(query=prompt)
     else:
         output = model.predict(input=prompt)
     return output
