@@ -13,7 +13,7 @@ names = ["yoonhyung jang", "doowon kim", "jinhak choi"]
 usernames = ["yhj", "dwk", "jhc"]
 # 비밀번호 =  [123,   456,   789]
 
-def add_message(prompt):
+def add_message(prompt, uploadedFile):
     st.session_state.messages.append({"role" : "USER", "content" : prompt})
     res = llm.Prompt(st.session_state.model, prompt, uploadedFile)
     st.session_state.messages.append({"role" : "BOT", "content" : res})
