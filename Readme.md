@@ -1,9 +1,19 @@
 # AWS + LLM Study
 ---
-## Install Project
+## Install virtualenv
+```
+pip install virtualenv
+virtualenv venv
+```
+
+## Activate env
 ```
 venv\Scripts\activate.bat        (Windows)
 source venv\Scripts\activate     (Linux , MacOS)
+```
+
+## Install Project
+```
 pip install -r requirements.txt
 ```
 

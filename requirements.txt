@@ -130,7 +130,7 @@ typing_extensions==4.11.0
 tzdata==2024.1
 urllib3==2.2.1
 uvicorn==0.29.0
-uvloop==0.19.0
+# uvloop==0.1.0
 watchdog==4.0.0
 watchfiles==0.21.0
 websocket-client==1.8.0
